@@ -4,6 +4,8 @@ This task comes with a mock API and WebSocket server that represents a snapshot 
 
 The challenge is to build a lightweight application to display the events returned by the API and enable users to browse for more details and betting opportunities.
 
+API documentation (sportsbook): https://hub.docker.com/r/sbgtechtest/api/
+
 ## The Task
 
 We realise everyone has different levels of skill and experience when it comes to development so we have listed different levels of tasks below for you to choose from. If you do not have the time or the knowledge to complete them all then that's ok, we just want to see how you approach the problem and get a feel for how you code.

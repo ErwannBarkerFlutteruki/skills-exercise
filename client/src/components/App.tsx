@@ -1,15 +1,13 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { wsEndpoint } from "../utils/config";
 const App: FC = () => {
-
-const [isSetup, setSetup] = useState(false);
-let ws: WebSocket | null = null;
+  //make sure endpoint is correctly set
+  let ws: WebSocket = new WebSocket(wsEndpoint);
 
   useEffect(() => {
-    ws = new WebSocket(wsEndpoint);
-    ws.onopen = () => console.log("ws opened");
     ws.onclose = () => console.log("ws closed");
-    ws.send(`Check the instructions to see what needs passing here`);
+    //ws is open at this point
+    ws.send(JSON.stringify({ type: "getLiveEvents", primaryMarkets: true }));
     return () => {
       if (ws) {
         ws.close();

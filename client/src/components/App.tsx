@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 
-//END POINT URL NEEDS SETTING IN CONFIG
 import { wsEndpoint } from '../utils/config'
 
 export class App extends Component<{}, { data: any }> {
@@ -10,27 +9,55 @@ export class App extends Component<{}, { data: any }> {
     super(props)
     this.w = new WebSocket(wsEndpoint)
     this.state = {
-      data: null
+      data: {data: null}
     }
   }
+	
+	/* Toggle Odds
+	
+	export default App => {
+		const [toggled, isToggled] = useState();
+		...
+	}
+
+	useEffect(() => {
+		...
+	})
+
+	return (
+		<button onClick = () /> 
+	)
+
+	*/
+
   componentDidMount() {
-    // a messgae has been recieved
+    // a message has been recieved
     this.w.onmessage = (e: MessageEvent) => {
-      console.log(e);
+			this.setState({
+				data:JSON.parse(e.data)				
+			})
     }
     // send a request to get events
     this.w.onopen = () =>
-      this.w.send(`Check the instructions to see what needs passing here`);
-  }
+      this.w.send(JSON.stringify({type: "getLiveEvents", primaryMarkets: true }));
+  } 	
   componentWillUnmount() {
     this.w.close()
-  }
+  } 
 
   render() {
-    const { data } = this.state
+		const { data } = this.state
+		console.log(data.data);
+		if (data && data.type && data.type === 'LIVE_EVENTS_DATA') {	
+			// console.log(data.data.map((item: any) => item.name));
+			return (
+				<div>
+					{JSON.stringify(data.data.map((item: any) => item.name ))}
+						<div> + </div>
+				</div>
+				/* <div>{JSON.stringify(data.data)} */
 
-    return (
-      <div>Hello Worsld</div>
-    )
-  }
-}
+			) 
+		} else
+		return <div>loading</div>
+	}}

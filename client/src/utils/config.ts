@@ -1,1 +1,1 @@
-export const wsEndpoint = 'SET THE ENDPOINT URL'
+export const wsEndpoint = 'ws://localhost:8889'

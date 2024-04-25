@@ -1,36 +1,32 @@
-import React, { Component } from 'react'
+import React, { FC, useEffect, useRef, useState } from "react";
+import { wsEndpoint } from "../utils/config";
+const App: FC = () => {
 
-//END POINT URL NEEDS SETTING IN CONFIG
-import { wsEndpoint } from '../utils/config'
+const [isSetup, setSetup] = useState(false);
+let ws: WebSocket | null = null;
 
-export class App extends Component<{}, { data: any }> {
-  private w: WebSocket
-  constructor(props: any) {
+  useEffect(() => {
+    ws = new WebSocket(wsEndpoint);
+    ws.onopen = () => console.log("ws opened");
+    ws.onclose = () => console.log("ws closed");
+    ws.send(`Check the instructions to see what needs passing here`);
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  },[ws]);
 
-    super(props)
-    this.w = new WebSocket(wsEndpoint)
-    this.state = {
-      data: null
-    }
-  }
-  componentDidMount() {
-    // a messgae has been recieved
-    this.w.onmessage = (e: MessageEvent) => {
-      console.log(e);
-    }
-    // send a request to get events
-    this.w.onopen = () =>
-      this.w.send(`Check the instructions to see what needs passing here`);
-  }
-  componentWillUnmount() {
-    this.w.close()
-  }
+  useEffect(() => {
+    if (!ws) return;
+    ws.onmessage = e => {
+      const message = JSON.parse(e.data);
+      console.log("e", message);
+    };
+  }, []);
 
-  render() {
-    const { data } = this.state
-
-    return (
-      <div>Hello Worsld</div>
-    )
-  }
-}
+  return (
+  <div>Initial Render</div>
+  );
+};
+export default App;

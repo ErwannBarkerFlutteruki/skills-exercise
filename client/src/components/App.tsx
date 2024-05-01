@@ -1,92 +1,100 @@
-import React, { Component, ReactElement } from 'react'
+import React, { FC, useEffect, useRef, useState } from "react";
+import { wsEndpoint } from "../utils/config";
+import Market from "./Market";
 
-import { wsEndpoint } from '../utils/config'
-import Market from './Market'
 
-export  class App extends Component<{}, { data: any }> {
-  private w: WebSocket
-  constructor(props: any) {
-
-    super(props)
-    this.w = new WebSocket(wsEndpoint)
-    this.state = {
-      	data: {
-			liveEventsData: [],
-			market: {},
-			getOutcomes: {}
-		}
-	}
+export type marketDataType = {
+  outcomes: number[];
+  eventId: number;
+  name: string;
 }
-	
-	componentDidMount() {
-	//example of types
-	type LiveEventDataResponseType = {
-		eventId: number;
-	}
 
-    // a message has been recieved
-    this.w.onmessage = (e: MessageEvent) => {
-		const response = JSON.parse(e.data);
-		// console.log(response.type);
-		switch (response.type) {
-			case "LIVE_EVENTS_DATA" :
-				const eventData: LiveEventDataResponseType = response.data;
-				this.setState({
-					data: {
-						...this.state.data,
-						liveEventsData: eventData,
-						market: null
-					}
-				});
-			break;
-			case "MARKET_DATA" :
-				const marketData: LiveEventDataResponseType = response.data;
-				this.setState({
-					data: {
-						...this.state.data,
-						market: marketData
-					}
-				}, this.getOutcomes());
-			break;
+const App: FC = () => {
 
-			// const outcome = outcome.find(outcomeId)
-		}
-
-    }
-    // send a request to get events
-    this.w.onopen = () =>
-      	this.w.send(JSON.stringify({type: "getLiveEvents", primaryMarkets: true }));
-  	}
-
-	getMarket = (marketId: number) => {
-		this.w.send(JSON.stringify({ type: "getMarket", id: marketId }));
-   }
-  componentWillUnmount() {
-    this.w.close()
+  type LiveEventDataType = {
+    eventId: number;
   }
 
-  render() {
-	const { data } = this.state
+  type liveEventsList = LiveEventDataType[];
 
-	  if (data && data.liveEventsData.length) {
-			// console.log(data.data.map((item: any) => item.name));
-			return (
-				<div>
-					{data.liveEventsData.map((item: any) => {
-						let market: any = null;
-						if (this.state.data.market && item.eventId === this.state.data.market.eventId) {
-							market = <Market market={data.market}/>
-						}
-						return (
-						<>
-							<div key={item.eventId} onClick={() => this.getMarket(item.markets[0])}>{item.name}</div>
-							{market}
-						</>
-						)
-	  })}
+  //make sure endpoint is correctly set
+  let ws: WebSocket | null = null;
 
-				</div>
-			)
-		} else
-		return <div>loading</div>
-	}}
+  const [liveEventsData, setLiveEventsData] = useState<liveEventsList>([]);
+  const [marketData, setMarketData] = useState<marketDataType | null>(null);
+  const [websocket, setWebsocket] = useState<WebSocket | null>();
+
+  // this.state = {
+  //   data: {
+  //     market: {},
+  //     outcomes: {}
+  // }
+
+  useEffect(() => {
+    ws = new WebSocket(wsEndpoint);
+    ws.onclose = () => console.log("ws closed");
+    ws.onopen = () => ws && ws.send(JSON.stringify({ type: "getLiveEvents", primaryMarkets: true }));
+    setWebsocket(ws);
+    return () => {
+      if (ws) {
+        ws.close();
+        setWebsocket(ws);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!websocket) {
+      return;
+    }
+    websocket.onmessage = e => {
+      console.log(e);
+      const response = JSON.parse(e.data);
+      // console.log(response.type);
+      switch (response.type) {
+        case "LIVE_EVENTS_DATA":
+          const eventData: liveEventsList = response.data;
+          setLiveEventsData(eventData);
+          break;
+        case "MARKET_DATA":
+          const marketResponse = JSON.parse(e.data);
+
+          const marketDataResponse: marketDataType = response.data;
+          setMarketData(marketDataResponse);
+          break;
+      }
+
+    };
+  }, [websocket]);
+
+  const getMarket = (marketId: number ) => {
+    if (!websocket) {
+        return;
+      }
+    websocket.send(JSON.stringify({ type: "getMarket", id: marketId }));
+  }
+
+  if (liveEventsData.length) {
+    // console.log(data.data.map((item: any) => item.name));
+    return (
+      <div>
+        {liveEventsData.map((item: any) => {
+          let market: any = null;
+          if (marketData && marketData.eventId === item.eventId) {
+            //if I have a market but no outcomes, get the outcomes and then pass them to the market object.
+            market = <Market marketData={marketData} />
+          }
+          return (
+            <>
+              <div key={item.eventId} onClick={() => getMarket(item.markets[0])}>{item.name}</div>
+              {market}
+            </>
+          )
+        })}
+
+      </div>
+    )
+  } else
+    return <div>loading</div>
+};
+export default App;

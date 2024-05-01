@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
+import { marketDataType } from './App';
 
+interface Props {
+	marketData: marketDataType
+}
 
-const Market: React.FC<any> = (props) => {
-	console.log(props)
+const Market: React.FC<Props> = (props) => {
 	return (
-		<>hello market</>
+		<div>{props.marketData.eventId} - {props.marketData.name}</div>
 	)
 }
 

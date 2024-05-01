@@ -12,30 +12,13 @@ export  class App extends Component<{}, { data: any }> {
     this.state = {
       	data: {
 			liveEventsData: [],
-			market: {}
+			market: {},
+			getOutcomes: {}
 		}
 	}
 }
-
-	/* Toggle Odds
-
-	export default App => {
-		const [toggled, isToggled] = useState();
-		...
-	}
-
-	useEffect(() => {
-		...
-	})
-
-	return (
-		<button onClick = () />
-	)
-
-	*/
-
-
-  componentDidMount() {
+	
+	componentDidMount() {
 	//example of types
 	type LiveEventDataResponseType = {
 		eventId: number;
@@ -66,6 +49,7 @@ export  class App extends Component<{}, { data: any }> {
 				}, this.getOutcomes());
 			break;
 
+			// const outcome = outcome.find(outcomeId)
 		}
 
     }

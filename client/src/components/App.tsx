@@ -58,12 +58,13 @@ const App: FC = () => {
           break;
         case "MARKET_DATA":
           const marketResponse = JSON.parse(e.data);
+					console.log(marketResponse);
 
           const marketDataResponse: marketDataType = response.data;
           setMarketData(marketDataResponse);
+					console.log(marketData);
           break;
       }
-
     };
   }, [websocket]);
 
@@ -83,15 +84,15 @@ const App: FC = () => {
           if (marketData && marketData.eventId === item.eventId) {
             //if I have a market but no outcomes, get the outcomes and then pass them to the market object.
             market = <Market marketData={marketData} />
+						console.log(marketData);
           }
           return (
             <>
               <div key={item.eventId} onClick={() => getMarket(item.markets[0])}>{item.name}</div>
-              {market}
+							{market}
             </>
           )
         })}
-
       </div>
     )
   } else

@@ -25,14 +25,17 @@ const Market: React.FC<Props> = (props) => {
 						<span> + </span>
 					</div>
 					{ selected === props.marketData.eventId ? 
-						<div className="content"> Event Details {props.marketData.eventId} - {props.marketData.outcomes} </div>
+						<div className="content"> Event Details {props.marketData.eventId}
+						{props.marketData.outcomes && props.marketData.outcomes.length > 0 ? 
+				props.marketData.outcomes.map((item: any) => <div>{item}</div>) : 
+						<div> no data found! </div>}
+						
+						</div>
 					: null}
+
 				</div>
 			</div>
 		</div>
-			/* {props.marketData.outcomes && props.marketData.outcomes.length > 0 ? 
-					props.marketData.outcomes.map((item: any) => item.outcomes) : 
-					<div> no data found! </div>} */
 
 	) 	
 }

@@ -23,17 +23,7 @@ const App: FC = () => {
   const [liveEventsData, setLiveEventsData] = useState<liveEventsList>([]);
   const [marketData, setMarketData] = useState<marketDataType | null>(null);
   const [websocket, setWebsocket] = useState<WebSocket | null>();
-	const [selected, setSelected] = useState(null);
 
-	function handleSingleSelection(getCurrentId: any) {
-		setSelected(getCurrentId === selected ? null : getCurrentId)
-	}
-
-  // this.state = {
-  //   data: {
-  //     market: {},
-  //     outcomes: {}
-  // }
 
   useEffect(() => {
     ws = new WebSocket(wsEndpoint);
@@ -84,18 +74,20 @@ const App: FC = () => {
     // console.log(data.data.map((item: any) => item.name));
     return (
       <div>
-        {liveEventsData.map((item: any) => 
+        {liveEventsData.map((event: any) => 
 				{
           let market: any = null;
-          if (marketData && marketData.eventId === item.eventId) {
+          if (marketData && marketData.eventId === event.eventId) {
             //if I have a market but no outcomes, get the outcomes and then pass them to the market object.
             market = <div className="accordian"><Market marketData={marketData} /> </div>
-						console.log(marketData);
           }
+
           return (
             <>
-              <div className="item" key={item.eventId} onClick={() => getMarket(item.markets[0])}>
-								<div className="title" onClick={() => handleSingleSelection(item.eventId)}>{item.name}</div>
+
+              <div className="item" key={event.eventId} onClick={() => marketData ? setMarketData(null) : getMarket(event.markets[0])} >
+								
+								<div className="title">{event.name}</div>
 							</div> 
 								<div>{market}</div>
             </>

@@ -1,0 +1,9 @@
+.odds-button button{
+	background-color: #eff4fb;
+	color: #1e58c4;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 40px;
+	padding: 10px;
+	border: none;
+	border-radius: 4px;
+}

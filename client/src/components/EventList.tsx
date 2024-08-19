@@ -1,20 +1,29 @@
 import React, { FC } from "react";
-import { Events, MarketsData } from "../types/Event";
+import { Events, MarketData, MarketsData, OutcomeData, OutcomesData } from "../types/Event";
 import EventItem from "./EventItem";
 
 
 interface Props {
 	events: Events,
 	markets: MarketsData;
-	getMarket: (id: number) => void;
+	getMarkets: (ids: number[]) => void
+	outcomesData: OutcomesData
+	isFractional: boolean
 }
 
-const EventList: FC<Props> = ({ events, markets, getMarket }) => {
+const EventList: FC<Props> = ({ events, markets, getMarkets, outcomesData, isFractional }) => {
 	return (
 		<ul>
 		{events.map(event => {
-			const marketForEvent = markets[event.eventId] ? markets[event.eventId] : null;
-			return <EventItem event={event} market={marketForEvent} getMarket={getMarket} />})}
+			const marketsForEvent: MarketData[] = markets[event.eventId] ? markets[event.eventId] : [];
+
+			// let outcomesForEvent: OutcomeData[] = []
+			// if (marketsForEvent) {
+			// 	outcomesForEvent = outcomesData[marketsForEvent.marketId] ? outcomesData[marketsForEvent.marketId] : []
+			// }
+
+			// for each market in an event, get me all the outcomes
+			return <EventItem event={event} markets={marketsForEvent} getMarkets={getMarkets} outcomes={outcomesData} isFractional={isFractional} />})}
 		</ul>
 	)
 }

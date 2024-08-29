@@ -66,8 +66,8 @@ At a high level we will be looking for:
 ## Getting Started
 install your dependencies in the root dir
 ```
-# run the websocket API using docker compose
-docker-compose up
+# run the websocket API using docker compose in the root folder
+yarn start
 
 ```
 In a different terminal, you now need to run the React code

@@ -1,0 +1,23 @@
+.market {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.market-name {
+    font-size: 8px;
+    width: 20%;
+}
+
+.outcomes {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+}
+
+.outcome {
+    font-size: 8px;
+    padding: 5px 10px;
+    border: 1px solid grey;
+    margin-right: 5px;
+}
